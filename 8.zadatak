@@ -1,0 +1,119 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+
+#define MALLOC_ERROR (-2)
+
+typedef struct cvor* Position;
+
+typedef struct cvor {
+	int num;
+	Position left;
+	Position right;
+} Node;
+
+Position Insert(Position p, int value);
+void PreOrder(Position p);
+void InOrder(Position p);
+void PostOrder(Position p);
+
+char menu();
+
+int main() {
+	int end = 1;
+	Position root = NULL;
+	char function;
+
+	while (end) {
+		function = menu();
+
+		switch (function) {
+		case '1': {
+			int value;
+			printf("Enter a number to insert: ");
+			scanf("%d", &value);
+			root = Insert(root, value);
+			break;
+		}
+		case '2':
+			printf("Inorder: \n");
+			InOrder(root);
+			break;
+		case '3':
+			printf("Preorder: \n");
+			PreOrder(root);
+			break;
+		case '4':
+			printf("Postorder: \n");
+			PostOrder(root);
+			break;
+		case '5':
+			printf("END OF PROGRAM\n");
+			end = 0;
+			break;
+		default:
+			printf("Wrong input. Try again.\n\n");
+			break;
+		}
+	}
+
+	return EXIT_SUCCESS;
+}
+char menu() {
+	char character = 0;
+
+	printf("\nTo insert, enter '1'\nTo print inorder, enter '2'\nTo print preorder, enter '3'\nTo print postorder, enter '4'\nTo exit, enter '5'\n");
+	scanf(" %c", &character);
+
+	return character;
+}
+
+Position Insert(Position p, int value) {
+	if (p == NULL) {
+
+		Position newNode = (Position)malloc(sizeof(Node));
+		if (newNode == NULL) {
+			printf("Memory allocation error.\n");
+			return MALLOC_ERROR;
+		}
+
+		newNode->num = value;
+		newNode->left = newNode->right = NULL;
+		return newNode;
+	}
+
+
+	if (value < p->num) {
+		p->left = Insert(p->left, value);
+	}
+	else if (value > p->num) {
+		p->right = Insert(p->right, value);
+	}
+
+	return p;
+}
+void InOrder(Position p) {
+	if (p != NULL) {
+		InOrder(p->left);
+		printf(" %d", p->num);
+		InOrder(p->right);
+	}
+}
+
+void PreOrder(Position p) {
+	if (p != NULL) {
+		printf(" %d", p->num);
+		PreOrder(p->left);
+		PreOrder(p->right);
+	}
+}
+
+void PostOrder(Position p) {
+	if (p != NULL) {
+		PostOrder(p->left);
+		PostOrder(p->right);
+		printf(" %d", p->num);
+	}
+}
